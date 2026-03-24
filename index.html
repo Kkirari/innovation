@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>สื่อการเรียนรู้ภาษาจีน</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Mali', cursive;
+      background: #fdf8ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 540px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: #fff0f5;
+      color: #c05080;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #f7b8d0;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2c2c2a;
+      font-family: 'Kaiti', 'Mali', cursive;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #888780;
+    }
+
+    .deco-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .line {
+      flex: 1;
+      max-width: 70px;
+      height: 2px;
+      border-radius: 2px;
+    }
+
+    /* ===== CHAPTER LIST ===== */
+    .chapter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chapter-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .chapter-card:hover {
+      transform: translateX(6px) scale(1.01);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .num-badge {
+      min-width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .chapter-text { flex: 1; }
+
+    .zh {
+      font-family: 'Kaiti', serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .th {
+      font-size: 13px;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+
+    .arrow {
+      font-size: 20px;
+      opacity: 0.45;
+      flex-shrink: 0;
+    }
+
+    /* ===== PER-CHAPTER COLORS ===== */
+    .ch1 { background: #fff0f5; border-color: #f7c5d8; }
+    .ch1 .num-badge { background: #f7c5d8; color: #a03060; }
+    .ch1 .zh { color: #a03060; }
+    .ch1 .th { color: #b85070; }
+
+    .ch2 { background: #fff4e6; border-color: #ffd8a0; }
+    .ch2 .num-badge { background: #ffd8a0; color: #a05000; }
+    .ch2 .zh { color: #a05000; }
+    .ch2 .th { color: #c06010; }
+
+    .ch3 { background: #f0faf0; border-color: #b8e4b8; }
+    .ch3 .num-badge { background: #b8e4b8; color: #2a6e2a; }
+    .ch3 .zh { color: #2a6e2a; }
+    .ch3 .th { color: #3d8a3d; }
+
+    .ch4 { background: #f0f4ff; border-color: #b8caff; }
+    .ch4 .num-badge { background: #b8caff; color: #2a45a0; }
+    .ch4 .zh { color: #2a45a0; }
+    .ch4 .th { color: #3a5cbf; }
+
+    .ch5 { background: #fff8f0; border-color: #ffc8a0; }
+    .ch5 .num-badge { background: #ffc8a0; color: #954020; }
+    .ch5 .zh { color: #954020; }
+    .ch5 .th { color: #b05030; }
+
+    .ch6 { background: #f4f0ff; border-color: #cdb8ff; }
+    .ch6 .num-badge { background: #cdb8ff; color: #4a2a9a; }
+    .ch6 .zh { color: #4a2a9a; }
+    .ch6 .th { color: #5e3bba; }
+
+    .ch7 { background: #f0fff8; border-color: #a8e8cc; }
+    .ch7 .num-badge { background: #a8e8cc; color: #1a6644; }
+    .ch7 .zh { color: #1a6644; }
+    .ch7 .th { color: #2a8058; }
+
+    .ch8 { background: #fff0ee; border-color: #ffc0b8; }
+    .ch8 .num-badge { background: #ffc0b8; color: #9a2820; }
+    .ch8 .zh { color: #9a2820; }
+    .ch8 .th { color: #b83830; }
+
+    /* ===== FOOTER ===== */
+    .footer-note {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 12px;
+      color: #888780;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-badge">ภาษาจีนระดับประถม 6</div>
+      <h1>สื่อการเรียนรู้ภาษาจีน</h1>
+      <p>中文学习教材 · 8 บทเรียน</p>
+      <div class="deco-line">
+        <div class="line" style="background: linear-gradient(to right, transparent, #f7c5d8);"></div>
+        <div class="dot" style="background:#f7c5d8;"></div>
+        <div class="dot" style="background:#ffd8a0;"></div>
+        <div class="dot" style="background:#b8e4b8;"></div>
+        <div class="dot" style="background:#b8caff;"></div>
+        <div class="dot" style="background:#ffc8a0;"></div>
+        <div class="dot" style="background:#cdb8ff;"></div>
+        <div class="dot" style="background:#a8e8cc;"></div>
+        <div class="dot" style="background:#ffc0b8;"></div>
+        <div class="line" style="background: linear-gradient(to left, transparent, #ffc0b8);"></div>
+      </div>
+    </div>
+
+    <!-- Chapter List -->
+    <div class="chapter-list">
+
+      <a href="chapter1.html" class="chapter-card ch1">
+        <div class="num-badge">1</div>
+        <div class="chapter-text">
+          <div class="zh">飞机比火车快</div>
+          <div class="th">เครื่องบินเร็วกว่ารถไฟ</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter2.html" class="chapter-card ch2">
+        <div class="num-badge">2</div>
+        <div class="chapter-text">
+          <div class="zh">面包店怎么走</div>
+          <div class="th">ไปร้านขนมปังได้อย่างไร</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter3.html" class="chapter-card ch3">
+        <div class="num-badge">3</div>
+        <div class="chapter-text">
+          <div class="zh">我可以玩儿游戏吗</div>
+          <div class="th">ฉันเล่นเกมได้ไหม</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter4.html" class="chapter-card ch4">
+        <div class="num-badge">4</div>
+        <div class="chapter-text">
+          <div class="zh">你为什么迟到</div>
+          <div class="th">ทำไมคุณมาสาย</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter5.html" class="chapter-card ch5">
+        <div class="num-badge">5</div>
+        <div class="chapter-text">
+          <div class="zh">中国菜很好吃</div>
+          <div class="th">อาหารจีนอร่อยมาก</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter6.html" class="chapter-card ch6">
+        <div class="num-badge">6</div>
+        <div class="chapter-text">
+          <div class="zh">我们去大皇宫还是水上市场</div>
+          <div class="th">เราจะไปพระบรมมหาราชวังหรือตลาดน้ำ</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter7.html" class="chapter-card ch7">
+        <div class="num-badge">7</div>
+        <div class="chapter-text">
+          <div class="zh">泰国菜有点辣</div>
+          <div class="th">อาหารไทยค่อนข้างเผ็ด</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="chapter8.html" class="chapter-card ch8">
+        <div class="num-badge">8</div>
+        <div class="chapter-text">
+          <div class="zh">春节快到了</div>
+          <div class="th">ตรุษจีนใกล้จะมาถึงแล้ว</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+    </div>
+
+    <div class="footer-note">กดที่บทเรียนเพื่อเริ่มต้นเรียนรู้ · 点击章节开始学习</div>
+
+  </div>
+</body>
+</html>
