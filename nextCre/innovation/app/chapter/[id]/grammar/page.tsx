@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getChapterData, chapterList } from '@/data';
 import ChapterEngine from '@/components/chapter/ChapterEngine';
 import { ChapterPageProps } from '../page';
@@ -26,10 +26,7 @@ export default async function ChapterGrammarPage({ params }: ChapterPageProps) {
     notFound();
   }
 
-  // If no grammar, redirect back to map
-  if (!data.grammar || data.grammar.length === 0) {
-    redirect(`/chapter/${data.chapterNum}`);
-  }
-
+  // Don't redirect here — grammar may be added via admin (localStorage).
+  // ChapterEngine handles the admin-merged data client-side.
   return <ChapterEngine data={data} mode="grammar" />;
 }

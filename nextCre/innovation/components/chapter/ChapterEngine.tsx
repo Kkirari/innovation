@@ -65,7 +65,7 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
   const hasGrammar = grammarCount > 0;
 
   // Progress hook
-  const { markVocabLearned, markAllVocabLearned, updateQuizScore, markGrammarCompleted, learnedCount } = useChapterProgress(data.chapterNum, TOTAL);
+  const { markVocabLearned, markAllVocabLearned, updateQuizScore, markCompleted, markGrammarCompleted, learnedCount } = useChapterProgress(data.chapterNum, TOTAL);
 
   // State
   const [quizScore, setQuizScore] = useState(0);
@@ -81,6 +81,7 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
   const [countdownNum, setCountdownNum] = useState(3);
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const [roleplayData, setRoleplayData] = useState({ zh: 'กดปุ่มสุ่มเลย!', th: '', roleA: '???', roleB: '???' });
+  const [randomImageSrc, setRandomImageSrc] = useState<string | null>(null);
 
   const learnedSetRef = useRef(new Set<number>());
   const quizQuestionsRef = useRef<QuizQuestion[]>(buildQuizQuestions(TOTAL));
@@ -89,7 +90,9 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
   const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const QUIZ_START_INDEX = TOTAL + 1 + (hasGrammar ? 1 + grammarCount + 1 : 0);
+  const hasGrammarImages = data.grammarImages && data.grammarImages.length > 0;
+  const showRoleplay = data.showRoleplay !== false; // default true
+  const QUIZ_START_INDEX = TOTAL + 1 + (hasGrammar ? 1 + grammarCount + (hasGrammarImages ? 1 : 0) + (showRoleplay ? 1 : 0) : 0);
 
   // Cursor sparkle setup
   useEffect(() => setupCursorSparkle(), []);
@@ -198,6 +201,14 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
     });
     createConfetti();
   }, [data.grammar]);
+
+  // Random image
+  const randomizeImage = useCallback(() => {
+    if (!data.grammarImages || data.grammarImages.length === 0) return;
+    const randIndex = Math.floor(Math.random() * data.grammarImages.length);
+    setRandomImageSrc(data.grammarImages[randIndex]);
+    createConfetti();
+  }, [data.grammarImages]);
 
   // Quiz check answer — now saves best score to localStorage
   const checkAnswer = useCallback((qi: number, chosenIndex: number) => {
@@ -369,9 +380,44 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
                 <div className="card" style={{ padding: '40px 20px' }}>
                   <div className="card-stripe" style={{ background: '#56ab2f' }} />
                   <div className="word-section">
-                    <div className="word" style={{ fontSize: 'min(48px, 10vw)', lineHeight: 1.4, whiteSpace: 'normal' }}>{g.zh}</div>
-                    <div className="pinyin" style={{ fontSize: '24px', color: '#666', marginTop: '15px' }}>{g.py}</div>
-                    <div style={{ fontSize: '26px', color: '#ff5722', fontWeight: 700, marginTop: '20px' }}>{g.th}</div>
+                    {g.bZh || (g.dialogues && g.dialogues.length > 0) ? (
+                      <div className="dialogue-container" style={{ display: 'flex', flexDirection: 'column', gap: '15px', textAlign: 'left', width: '100%', maxHeight: '55vh', overflowY: 'auto', paddingRight: '10px' }}>
+                        {/* Person A */}
+                        <div style={{ background: '#f0f9ff', padding: '15px 20px', borderRadius: '15px', borderLeft: '4px solid #38bdf8' }}>
+                          <div style={{ fontWeight: 'bold', color: '#0284c7', marginBottom: '5px', fontSize: '16px' }}>🗣️ {g.roles?.[0] || 'A'}:</div>
+                          <div className="word" style={{ fontSize: 'min(32px, 7vw)', lineHeight: 1.3 }}>{g.zh}</div>
+                          <div className="pinyin" style={{ fontSize: '18px', color: '#666', marginTop: '4px' }}>{g.py}</div>
+                          <div style={{ fontSize: '18px', color: '#ea580c', fontWeight: 600, marginTop: '4px' }}>{g.th}</div>
+                        </div>
+                        {/* Person B */}
+                        {g.bZh && (
+                          <div style={{ background: '#fdf2f8', padding: '15px 20px', borderRadius: '15px', borderLeft: '4px solid #f472b6' }}>
+                            <div style={{ fontWeight: 'bold', color: '#be185d', marginBottom: '5px', fontSize: '16px' }}>🗣️ {g.roles?.[1] || 'B'}:</div>
+                            <div className="word" style={{ fontSize: 'min(32px, 7vw)', lineHeight: 1.3 }}>{g.bZh}</div>
+                            <div className="pinyin" style={{ fontSize: '18px', color: '#666', marginTop: '4px' }}>{g.bPy}</div>
+                            <div style={{ fontSize: '18px', color: '#ea580c', fontWeight: 600, marginTop: '4px' }}>{g.bTh}</div>
+                          </div>
+                        )}
+                        {/* Additional Dialogues */}
+                        {(g.dialogues || []).map((dl, dIdx) => {
+                          const isA = dIdx % 2 !== (g.bZh ? 0 : 1);
+                          return (
+                            <div key={dIdx} style={{ background: isA ? '#f0f9ff' : '#fdf2f8', padding: '15px 20px', borderRadius: '15px', borderLeft: `4px solid ${isA ? '#38bdf8' : '#f472b6'}` }}>
+                              <div style={{ fontWeight: 'bold', color: isA ? '#0284c7' : '#be185d', marginBottom: '5px', fontSize: '16px' }}>🗣️ {dl.speaker}:</div>
+                              <div className="word" style={{ fontSize: 'min(32px, 7vw)', lineHeight: 1.3 }}>{dl.zh}</div>
+                              <div className="pinyin" style={{ fontSize: '18px', color: '#666', marginTop: '4px' }}>{dl.py}</div>
+                              <div style={{ fontSize: '18px', color: '#ea580c', fontWeight: 600, marginTop: '4px' }}>{dl.th}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="word" style={{ fontSize: 'min(48px, 10vw)', lineHeight: 1.4, whiteSpace: 'normal' }}>{g.zh}</div>
+                        <div className="pinyin" style={{ fontSize: '24px', color: '#666', marginTop: '15px' }}>{g.py}</div>
+                        <div style={{ fontSize: '26px', color: '#ff5722', fontWeight: 700, marginTop: '20px' }}>{g.th}</div>
+                      </>
+                    )}
                     <div className="btn-row" style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
                       <button className="translate-btn" style={{ background: '#56ab2f', boxShadow: '0 6px 0 #388e3c', width: 'auto', padding: '0 30px' }} onClick={() => playGrammar(i)}>
                         <span className="play-icon">▶ ฟังเสียง</span>
@@ -386,29 +432,60 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
       );
     });
 
-    slides.push(
-      <SwiperSlide key="roleplay">
-        <div className="quiz-divider-box" style={{ background: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)', padding: '30px 20px' }}>
-          <div className="quiz-badge" style={{ color: '#FF5E62' }}>🎭 กิจกรรมสวมบทบาท</div>
-          <div className="quiz-title" style={{ fontSize: '36px', marginBottom: '10px' }}>จับคู่ Roleplay!</div>
-          <div className="quiz-subtitle" style={{ marginBottom: '20px' }}>จับคู่กับเพื่อน แล้วแสดงท่าทางตามประโยค! 🙌</div>
-          <div style={{ background: 'rgba(255,255,255,0.9)', borderRadius: '20px', padding: '25px 15px', width: '100%', maxWidth: '400px', margin: '0 auto 25px auto', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '24px', fontWeight: 'bold' }}>
-              <div style={{ color: '#2196f3' }}>A: <span>{roleplayData.roleA}</span></div>
-              <div style={{ color: '#e91e63' }}>B: <span>{roleplayData.roleB}</span></div>
+    // Random Image slide (if grammarImages exist)
+    if (hasGrammarImages) {
+      slides.push(
+        <SwiperSlide key="random-image">
+          <div className="quiz-divider-box" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '30px 20px' }}>
+            <div className="quiz-badge" style={{ color: '#764ba2' }}>🖼️ สุ่มรูปภาพ</div>
+            <div className="quiz-title" style={{ fontSize: '36px', marginBottom: '10px' }}>ดูรูปแล้วฝึกพูด!</div>
+            <div className="quiz-subtitle" style={{ marginBottom: '20px' }}>กดสุ่มรูปภาพ แล้วฝึกพูดประโยคที่เกี่ยวข้อง 🗣️</div>
+            <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: '20px', padding: '20px', width: '100%', maxWidth: '400px', margin: '0 auto 25px auto', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {randomImageSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/images/${randomImageSrc}`} alt="random" style={{ maxWidth: '100%', maxHeight: '250px', objectFit: 'contain', borderRadius: '12px', filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.15))' }} />
+              ) : (
+                <div style={{ textAlign: 'center', color: '#999', fontSize: '20px' }}>
+                  <div style={{ fontSize: '60px', marginBottom: '10px' }}>🖼️</div>
+                  กดปุ่มด้านล่างเพื่อสุ่มรูปภาพ
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>{roleplayData.zh}</div>
-            <div style={{ fontSize: '20px', color: '#ff5722', fontWeight: 'bold' }}>{roleplayData.th}</div>
+            <button className="quiz-start-btn" style={{ color: '#764ba2', marginBottom: '15px' }} onClick={randomizeImage}>
+              🎲 สุ่มรูปภาพ
+            </button>
+            <button className="quiz-start-btn" style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', boxShadow: 'none' }} onClick={() => swiperRef.current?.slideNext()}>
+              ไปต่อ 👉
+            </button>
           </div>
-          <button className="quiz-start-btn" style={{ color: '#FF5E62', marginBottom: '15px' }} onClick={randomizeRoleplay}>
-            🎲 สุ่มประโยคสำหรับฝึกคู่
-          </button>
-          <button className="quiz-start-btn" style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', boxShadow: 'none' }} onClick={() => swiperRef.current?.slideNext()}>
-            ไปทำแบบฝึกหัด 👉
-          </button>
-        </div>
-      </SwiperSlide>
-    );
+        </SwiperSlide>
+      );
+    }
+
+    if (showRoleplay) {
+      slides.push(
+        <SwiperSlide key="roleplay">
+          <div className="quiz-divider-box" style={{ background: 'linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)', padding: '30px 20px' }}>
+            <div className="quiz-badge" style={{ color: '#FF5E62' }}>🎭 กิจกรรมสวมบทบาท</div>
+            <div className="quiz-title" style={{ fontSize: '36px', marginBottom: '10px' }}>จับคู่ Roleplay!</div>
+            <div className="quiz-subtitle" style={{ marginBottom: '20px' }}>จับคู่กับเพื่อน แล้วแสดงท่าทางตามประโยค! 🙌</div>
+            <div style={{ background: 'rgba(255,255,255,0.9)', borderRadius: '20px', padding: '25px 15px', width: '100%', maxWidth: '400px', margin: '0 auto 25px auto', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '24px', fontWeight: 'bold' }}>
+                <div style={{ color: '#2196f3' }}>A: <span>{roleplayData.roleA}</span></div>
+                <div style={{ color: '#e91e63' }}>B: <span>{roleplayData.roleB}</span></div>
+              </div>
+              <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>{roleplayData.zh}</div>
+            </div>
+            <button className="quiz-start-btn" style={{ color: '#FF5E62', marginBottom: '15px' }} onClick={randomizeRoleplay}>
+              🎲 สุ่มประโยคสำหรับฝึกคู่
+            </button>
+            <button className="quiz-start-btn" style={{ background: 'transparent', color: '#fff', border: '2px solid #fff', boxShadow: 'none' }} onClick={() => swiperRef.current?.slideNext()}>
+              ไปทำแบบฝึกหัด 👉
+            </button>
+          </div>
+        </SwiperSlide>
+      );
+    }
   }
 
   // === QUIZ DIVIDER ===
@@ -463,6 +540,8 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
       markAllVocabLearned();
     } else if (mode === 'grammar') {
       markGrammarCompleted();
+    } else if (mode === 'quiz') {
+      markCompleted();
     }
     router.push(`/chapter/${data.chapterNum}`);
   };
@@ -489,7 +568,7 @@ function ChapterEngineContent({ data, mode = 'all' }: ChapterEngineProps) {
      ============================================================ */
   return (
     <>
-      <Background />
+      <Background chapterNum={data.chapterNum} />
 
       <div className="progress-bar">
         <div className="progress-fill" style={{ width: `${progressWidth}%` }} />

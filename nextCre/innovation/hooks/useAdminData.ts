@@ -43,6 +43,10 @@ export function useAdminData() {
     const adminChapter = adminData.chapters[id];
     const defaultChapter = getChapterData(id);
 
+    if (adminChapter && defaultChapter) {
+      // Merge latest introBanner from default, since it's not editable in admin
+      return { ...adminChapter, introBanner: defaultChapter.introBanner };
+    }
     if (adminChapter) return adminChapter;
     if (defaultChapter) return defaultChapter;
     return null; // Not found anywhere

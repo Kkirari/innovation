@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Background from '@/components/chapter/Background';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useChapterProgress } from '@/hooks/useProgress';
+import '@/styles/chapter.css';
 
 export default function ChapterMapClient({ chapterId }: { chapterId: string }) {
   const router = useRouter();
@@ -33,13 +34,13 @@ export default function ChapterMapClient({ chapterId }: { chapterId: string }) {
   const vocabDone = learnedCount >= totalVocab && totalVocab > 0;
   const grammarDone = progress.grammarCompleted;
   
-  // Logic for unlocking
-  const grammarUnlocked = vocabDone;
-  const quizUnlocked = hasGrammar ? grammarDone : vocabDone;
+  // Logic for unlocking (sequential: vocab → quiz → grammar)
+  const quizUnlocked = vocabDone;
+  const grammarUnlocked = progress.completed; // quiz must be done first
 
   return (
     <>
-      <Background />
+      <Background chapterNum={parseInt(chapterId, 10)} />
 
       <Link className="home-btn" href="/" title="หน้าหลัก" style={{ position: 'fixed', top: '14px', left: '20px', zIndex: 100, textDecoration: 'none', background: 'white', padding: '10px', borderRadius: '50%', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
         🏠
@@ -71,7 +72,33 @@ export default function ChapterMapClient({ chapterId }: { chapterId: string }) {
             </div>
           </Link>
 
-          {/* STAGE 2: GRAMMAR (if exists) */}
+          {/* STAGE 2: QUIZ (ทดสอบคำศัพท์) */}
+          {quizUnlocked ? (
+            <Link href={`/chapter/${data.chapterNum}/quiz`} style={{ textDecoration: 'none', display: 'block' }}>
+              <div style={{ background: 'linear-gradient(135deg, #ff8c00, #d84315)', border: '4px solid white', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: '0 10px 25px rgba(255,140,0,0.5)' }}>
+                <div style={{ fontSize: '40px', background: 'white', borderRadius: '50%', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'inset 0 4px 10px rgba(0,0,0,0.1)' }}>
+                  🏆
+                </div>
+                <div style={{ color: 'white', flex: 1 }}>
+                  <h3 style={{ fontSize: '24px', margin: 0 }}>ทดสอบคำศัพท์</h3>
+                  {progress.quizScore > 0 && <p style={{ margin: 0, opacity: 0.9 }}>คะแนนสูงสุด: {progress.quizScore}</p>}
+                </div>
+                {progress.completed && <div style={{ fontSize: '24px' }}>✅</div>}
+              </div>
+            </Link>
+          ) : (
+            <div style={{ background: '#9e9e9e', border: '4px solid #e0e0e0', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', gap: '20px', opacity: 0.8 }}>
+              <div style={{ fontSize: '40px', background: '#ccc', borderRadius: '50%', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                🔒
+              </div>
+              <div style={{ color: 'white', flex: 1 }}>
+                <h3 style={{ fontSize: '24px', margin: 0 }}>ทดสอบคำศัพท์</h3>
+                <p style={{ margin: 0, fontSize: '14px' }}>ต้องเรียนคำศัพท์ให้ครบก่อน</p>
+              </div>
+            </div>
+          )}
+
+          {/* STAGE 3: GRAMMAR (if exists) */}
           {hasGrammar && (
             grammarUnlocked ? (
               <Link href={`/chapter/${data.chapterNum}/grammar`} style={{ textDecoration: 'none', display: 'block' }}>
@@ -96,32 +123,6 @@ export default function ChapterMapClient({ chapterId }: { chapterId: string }) {
                 </div>
               </div>
             )
-          )}
-
-          {/* STAGE 3: QUIZ */}
-          {quizUnlocked ? (
-            <Link href={`/chapter/${data.chapterNum}/quiz`} style={{ textDecoration: 'none', display: 'block' }}>
-              <div style={{ background: 'linear-gradient(135deg, #ff8c00, #d84315)', border: '4px solid white', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: '0 10px 25px rgba(255,140,0,0.5)' }}>
-                <div style={{ fontSize: '40px', background: 'white', borderRadius: '50%', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'inset 0 4px 10px rgba(0,0,0,0.1)' }}>
-                  🏆
-                </div>
-                <div style={{ color: 'white', flex: 1 }}>
-                  <h3 style={{ fontSize: '24px', margin: 0 }}>แบบฝึกหัด</h3>
-                  {progress.quizScore > 0 && <p style={{ margin: 0, opacity: 0.9 }}>คะแนนสูงสุด: {progress.quizScore}</p>}
-                </div>
-                {progress.completed && <div style={{ fontSize: '24px' }}>✅</div>}
-              </div>
-            </Link>
-          ) : (
-            <div style={{ background: '#9e9e9e', border: '4px solid #e0e0e0', borderRadius: '24px', padding: '20px', display: 'flex', alignItems: 'center', gap: '20px', opacity: 0.8 }}>
-              <div style={{ fontSize: '40px', background: '#ccc', borderRadius: '50%', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                🔒
-              </div>
-              <div style={{ color: 'white', flex: 1 }}>
-                <h3 style={{ fontSize: '24px', margin: 0 }}>แบบฝึกหัด</h3>
-                <p style={{ margin: 0, fontSize: '14px' }}>ต้องผ่านด่านก่อนหน้าก่อน</p>
-              </div>
-            </div>
           )}
 
         </div>

@@ -5,11 +5,22 @@ export interface VocabItem {
   img: string;
 }
 
+export interface DialogLine {
+  speaker: string;
+  zh: string;
+  py: string;
+  th: string;
+}
+
 export interface GrammarItem {
   zh: string;
   py: string;
   th: string;
   roles: string[];
+  bZh?: string;
+  bPy?: string;
+  bTh?: string;
+  dialogues?: DialogLine[];
 }
 
 export interface ChapterData {
@@ -20,6 +31,8 @@ export interface ChapterData {
   introBanner: string[];
   vocab: VocabItem[];
   grammar: GrammarItem[];
+  grammarImages?: string[];
+  showRoleplay?: boolean; // default true
 }
 
 export interface ChapterListItem {

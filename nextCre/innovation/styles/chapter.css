@@ -28,9 +28,6 @@ body {
 /* ========= SKY BACKGROUND ========= */
 .bg-container {
   position: fixed; inset: 0;
-  background: linear-gradient(180deg,
-    #0a1628 0%, #0e2a52 38%, #1a4a8a 62%,
-    #3a7bd5 72%, #e87c2a 83%, #f5a623 91%, #ffd04a 100%);
   overflow: hidden;
 }
 .bg-container::before {
@@ -100,6 +97,223 @@ body {
 }
 @keyframes tiesScroll { from{background-position:0 0;} to{background-position:-68px 0;} }
 
+/* ========= FLOATING DECORATION EMOJIS ========= */
+.floating-decor { position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+.float-emoji {
+  position:absolute; font-size:38px;
+  opacity:0.25; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  animation:floatDrift linear infinite;
+}
+.fe-1 { top:15%; left:-60px; animation-duration:22s; animation-delay:0s; font-size:42px; }
+.fe-2 { top:35%; left:-60px; animation-duration:28s; animation-delay:-8s; font-size:34px; opacity:0.18; }
+.fe-3 { top:55%; left:-60px; animation-duration:25s; animation-delay:-15s; font-size:36px; opacity:0.2; }
+@keyframes floatDrift { from{transform:translateX(0) rotate(0deg);} to{transform:translateX(calc(100vw + 120px)) rotate(25deg);} }
+
+/* ========= CH2: CITY ROAD ========= */
+.ground-road { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.road-surface { position:absolute; bottom:0; left:0; right:0; height:70px; background:linear-gradient(180deg,#555 0%,#3a3a3a 100%); }
+.road-dashes {
+  position:absolute; bottom:28px; left:0; right:0; height:6px;
+  background-image:repeating-linear-gradient(90deg,#ffd04a 0px,#ffd04a 40px,transparent 40px,transparent 80px);
+  animation:dashScroll 1.2s linear infinite;
+}
+@keyframes dashScroll { from{background-position:0 0;} to{background-position:-80px 0;} }
+.sidewalk { position:absolute; bottom:70px; left:0; right:0; height:18px; background:linear-gradient(180deg,#d4c4a8 0%,#bfaf93 100%); border-top:3px solid #c8b896; }
+.lamppost {
+  position:absolute; bottom:70px; width:6px; height:90px;
+  background:linear-gradient(180deg,#666 0%,#444 100%);
+  border-radius:3px 3px 0 0; z-index:3;
+}
+.lp1 { left:15%; }
+.lp2 { right:20%; }
+.lamppost::before {
+  content:''; position:absolute; top:-8px; left:-12px;
+  width:30px; height:16px; border-radius:16px 16px 0 0;
+  background:#555; border:2px solid #777;
+}
+.lamp-light {
+  position:absolute; top:-30px; left:-20px;
+  width:46px; height:50px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,220,140,0.6) 0%, transparent 70%);
+  animation:lampFlicker 3s ease-in-out infinite alternate;
+}
+@keyframes lampFlicker { 0%{opacity:0.7;} 100%{opacity:1;} }
+
+/* ========= CH3: PIXEL GROUND ========= */
+.ground-pixel { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.pixel-blocks {
+  position:absolute; bottom:0; left:0; right:0; height:60px;
+  background-image:
+    repeating-linear-gradient(90deg,#4a148c 0px,#4a148c 30px,#6a1b9a 30px,#6a1b9a 60px),
+    repeating-linear-gradient(180deg,transparent 0px,transparent 30px,rgba(0,0,0,0.15) 30px,rgba(0,0,0,0.15) 60px);
+  background-size:60px 30px;
+  image-rendering:pixelated;
+}
+.pixel-glow {
+  position:absolute; bottom:55px; left:0; right:0; height:20px;
+  background:linear-gradient(180deg,transparent 0%,rgba(155,89,182,0.4) 100%);
+}
+.pixel-stars { position:absolute; inset:0; }
+.px-star {
+  position:absolute; color:#e1bee7; font-size:18px;
+  animation:pxBlink 1.5s ease-in-out infinite alternate;
+}
+.s1 { top:20%; left:12%; animation-delay:0s; }
+.s2 { top:40%; right:18%; animation-delay:0.3s; font-size:14px; }
+.s3 { top:10%; right:35%; animation-delay:0.6s; }
+.s4 { top:50%; left:40%; animation-delay:0.9s; font-size:22px; }
+@keyframes pxBlink { 0%{opacity:0.3;transform:scale(0.8);} 100%{opacity:1;transform:scale(1.2);} }
+
+/* ========= CH4: MORNING PATH ========= */
+.ground-path { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.grass-ground { position:absolute; bottom:0; left:0; right:0; height:55px; background:linear-gradient(180deg,#4caf50 0%,#2e7d32 100%); }
+.grass-ground::before {
+  content:''; position:absolute; top:-12px; left:0; right:0; height:14px;
+  background-image:repeating-linear-gradient(90deg,transparent 0px,transparent 8px,#4caf50 8px,#4caf50 12px);
+  clip-path:polygon(0% 100%,3% 30%,6% 100%,9% 40%,12% 100%,15% 20%,18% 100%,21% 50%,24% 100%,27% 30%,30% 100%,33% 45%,36% 100%,39% 25%,42% 100%,45% 50%,48% 100%,51% 35%,54% 100%,57% 45%,60% 100%,63% 20%,66% 100%,69% 40%,72% 100%,75% 30%,78% 100%,81% 50%,84% 100%,87% 25%,90% 100%,93% 45%,96% 100%,100% 35%);
+}
+.stone-path {
+  position:absolute; bottom:8px; left:30%; right:30%; height:40px;
+  background-image:repeating-linear-gradient(90deg,#9e9e9e 0px,#9e9e9e 24px,#bdbdbd 24px,#bdbdbd 28px);
+  border-radius:4px; opacity:0.6;
+}
+.sunrise-glow {
+  position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+  width:300px; height:150px; border-radius:50%;
+  background:radial-gradient(ellipse, rgba(255,200,100,0.3) 0%, transparent 70%);
+  animation:sunGlow 4s ease-in-out infinite alternate;
+}
+@keyframes sunGlow { 0%{opacity:0.5;transform:translateX(-50%) scale(1);} 100%{opacity:1;transform:translateX(-50%) scale(1.15);} }
+
+/* ========= CH5: WOODEN COUNTER ========= */
+.ground-wood { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.wood-surface {
+  position:absolute; bottom:0; left:0; right:0; height:65px;
+  background:linear-gradient(180deg,#8d6e4a 0%,#6d4c2a 50%,#5a3d1a 100%);
+  border-top:4px solid #a0845c;
+}
+.wood-surface::before {
+  content:''; position:absolute; inset:0;
+  background-image:repeating-linear-gradient(90deg,transparent 0px,transparent 60px,rgba(0,0,0,0.08) 60px,rgba(0,0,0,0.08) 62px);
+}
+.steam-puff {
+  position:fixed; width:40px; height:40px; border-radius:50%;
+  background:rgba(255,255,255,0.15); filter:blur(12px);
+  animation:steamRise 3s ease-out infinite;
+}
+.st1 { bottom:120px; left:25%; animation-delay:0s; }
+.st2 { bottom:110px; left:55%; animation-delay:1s; width:30px; height:30px; }
+.st3 { bottom:130px; right:20%; animation-delay:2s; width:35px; height:35px; }
+@keyframes steamRise { 0%{opacity:0;transform:translateY(0) scale(0.5);} 40%{opacity:0.6;} 100%{opacity:0;transform:translateY(-80px) scale(1.5);} }
+
+.hanging-lantern {
+  position:fixed; font-size:40px; z-index:3;
+  animation:lanternSway 3s ease-in-out infinite;
+  filter:drop-shadow(0 8px 16px rgba(255,0,0,0.3));
+}
+.hl1 { top:8%; right:10%; animation-delay:0s; }
+.hl2 { top:12%; left:8%; animation-delay:1.5s; font-size:32px; }
+.hl3 { top:6%; left:45%; animation-delay:0.8s; font-size:36px; }
+@keyframes lanternSway { 0%,100%{transform:rotate(-5deg);} 50%{transform:rotate(5deg);} }
+
+/* ========= CH6: WATER SURFACE ========= */
+.ground-water { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.water-surface {
+  position:absolute; bottom:0; left:0; right:0; height:65px;
+  background:linear-gradient(180deg,rgba(41,128,185,0.7) 0%,rgba(52,152,219,0.5) 50%,rgba(72,177,191,0.6) 100%);
+}
+.water-ripple {
+  position:absolute; border-radius:50%;
+  border:2px solid rgba(255,255,255,0.3);
+  animation:rippleExpand 4s ease-out infinite;
+}
+.wr1 { bottom:20px; left:20%; width:60px; height:20px; animation-delay:0s; }
+.wr2 { bottom:30px; left:55%; width:80px; height:25px; animation-delay:1.3s; }
+.wr3 { bottom:15px; right:15%; width:50px; height:16px; animation-delay:2.6s; }
+@keyframes rippleExpand { 0%{transform:scale(0.5);opacity:0.8;} 100%{transform:scale(2.5);opacity:0;} }
+
+.temple-silhouette {
+  position:absolute; bottom:60px; left:50%; transform:translateX(-50%);
+  width:0; height:0;
+  border-left:40px solid transparent; border-right:40px solid transparent;
+  border-bottom:55px solid rgba(0,0,0,0.15);
+}
+.temple-silhouette::before {
+  content:''; position:absolute; bottom:-55px; left:-60px;
+  width:120px; height:25px; background:rgba(0,0,0,0.1);
+  border-radius:2px;
+}
+.temple-silhouette::after {
+  content:''; position:absolute; bottom:-16px; left:-20px;
+  width:0; height:0;
+  border-left:20px solid transparent; border-right:20px solid transparent;
+  border-bottom:30px solid rgba(0,0,0,0.12);
+}
+
+/* ========= CH7: MARKET GROUND ========= */
+.ground-market { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.market-awning {
+  position:absolute; bottom:65px; left:0; right:0; height:25px;
+  background:repeating-linear-gradient(90deg,#e74c3c 0px,#e74c3c 30px,#fff 30px,#fff 60px);
+  border-bottom:3px solid #c0392b;
+}
+.market-counter {
+  position:absolute; bottom:0; left:0; right:0; height:65px;
+  background:linear-gradient(180deg,#8b5e3c 0%,#6d4326 100%);
+  border-top:4px solid #a77044;
+}
+.chili-deco {
+  position:fixed; font-size:28px; z-index:3;
+  animation:chiliDance 2s ease-in-out infinite;
+}
+.cd1 { top:18%; right:8%; animation-delay:0s; }
+.cd2 { top:28%; left:6%; animation-delay:0.7s; font-size:22px; }
+.cd3 { top:12%; left:30%; animation-delay:1.4s; font-size:24px; }
+@keyframes chiliDance { 0%,100%{transform:rotate(-8deg) scale(1);} 50%{transform:rotate(8deg) scale(1.1);} }
+
+/* ========= CH8: FESTIVE GROUND ========= */
+.ground-festive { position:fixed; bottom:0; left:0; right:0; height:118px; z-index:2; pointer-events:none; overflow:hidden; }
+.festive-ground {
+  position:absolute; bottom:0; left:0; right:0; height:55px;
+  background:linear-gradient(180deg,#b71c1c 0%,#7f0000 100%);
+  border-top:4px solid #ffd700;
+}
+.festive-ground::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:repeating-linear-gradient(90deg,#ffd700 0px,#ffd700 20px,transparent 20px,transparent 30px);
+}
+
+.firework {
+  position:fixed; width:6px; height:6px; border-radius:50%;
+  animation:fireworkBurst 3s ease-out infinite;
+}
+.fw1 { top:10%; left:15%; background:#ffd700; animation-delay:0s; }
+.fw2 { top:20%; right:20%; background:#ff4444; animation-delay:1s; }
+.fw3 { top:8%; left:60%; background:#ff9800; animation-delay:2s; }
+@keyframes fireworkBurst {
+  0% { transform:scale(0); opacity:1; box-shadow:none; }
+  50% { transform:scale(1); opacity:1;
+    box-shadow:
+      0 -30px 0 0 currentColor, 0 30px 0 0 currentColor,
+      -30px 0 0 0 currentColor, 30px 0 0 0 currentColor,
+      -21px -21px 0 0 currentColor, 21px -21px 0 0 currentColor,
+      -21px 21px 0 0 currentColor, 21px 21px 0 0 currentColor,
+      0 -15px 0 0 currentColor, 0 15px 0 0 currentColor,
+      -15px 0 0 0 currentColor, 15px 0 0 0 currentColor;
+  }
+  100% { transform:scale(1.5); opacity:0;
+    box-shadow:
+      0 -50px 0 -2px currentColor, 0 50px 0 -2px currentColor,
+      -50px 0 0 -2px currentColor, 50px 0 0 -2px currentColor,
+      -35px -35px 0 -2px currentColor, 35px -35px 0 -2px currentColor,
+      -35px 35px 0 -2px currentColor, 35px 35px 0 -2px currentColor,
+      0 -25px 0 -2px currentColor, 0 25px 0 -2px currentColor,
+      -25px 0 0 -2px currentColor, 25px 0 0 -2px currentColor;
+  }
+}
+
+/* ========= CH2 cloud tinting (cloud ::before/::after inherit) ========= */
+.cloud::before, .cloud::after { background:inherit; }
 
 
 /* ========= PROGRESS BAR ========= */
