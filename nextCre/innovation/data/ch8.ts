@@ -23,7 +23,7 @@ const ch8: ChapterData = {
             "zh": "快到了 ",
             "py": "kuài dào le",
             "th": "ใกล้ถึงแล้ว, ใกล้เข้ามาแล้ว",
-            "img": "sec8/2png"
+            "img": "sec8/2.png"
         },
         {
             "zh": "假期",
